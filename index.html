@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Betting Panel</title>
+  <style>
+    body { font-family: sans-serif; background: #111; color: #fff; margin: 0; padding: 0; }
+    .header { display: flex; justify-content: space-between; padding: 10px; background: #000; }
+    .balance { color: #0f0; }
+    .match { background: #222; margin: 10px; padding: 10px; border-radius: 10px; }
+    .btn { padding: 10px; background: #0f0; color: #000; margin: 5px 0; border: none; border-radius: 5px; cursor: pointer; }
+    .input { padding: 8px; width: 100%; margin: 5px 0; border-radius: 5px; border: none; }
+    .wallet-btn { position: fixed; bottom: 20px; right: 20px; background: #0f0; color: #000; padding: 10px 20px; border-radius: 50%; font-weight: bold; font-size: 20px; cursor: pointer; }
+    .admin-icon { position: fixed; top: 10px; right: 10px; font-size: 20px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h2>ম্যাচ বেটিং</h2>
+    <div class="balance">ব্যালেন্স: ৳<span id="balance">1000</span></div>
+  </div>
+
+  <div id="match-list">
+    <!-- Matches will appear here -->
+  </div>
+
+  <div class="wallet-btn" onclick="openWallet()">৳</div>
+  <div class="admin-icon" onclick="adminLogin()">🅡</div>
+
+  <script>
+    let balance = 1000;
+    const matches = [];
+
+    function renderMatches() {
+      const list = document.getElementById('match-list');
+      list.innerHTML = '';
+      matches.forEach((match, index) => {
+        list.innerHTML += `
+          <div class="match">
+            <h3>${match.title}</h3>
+            <input class="input" placeholder="বেট এমাউন্ট" id="amount${index}" type="number"/>
+            <button class="btn" onclick="placeBet(${index}, 1)">বেট ${match.team1} (${match.multi1}x)</button>
+            <button class="btn" onclick="placeBet(${index}, 2)">বেট ${match.team2} (${match.multi2}x)</button>
+          </div>`;
+      });
+    }
+
+    function placeBet(index, team) {
+      const amount = parseInt(document.getElementById(`amount${index}`).value);
+      if (!amount || amount <= 0) return alert("বেট এমাউন্ট দিন!");
+      if (amount > balance) return alert("পর্যাপ্ত ব্যালেন্স নেই!");
+
+      balance -= amount;
+      document.getElementById("balance").innerText = balance;
+      alert(`বেট কনফার্ম ✅`);
+    }
+
+    function openWallet() {
+      const action = prompt("টাইপ করুন:\n1. ডিপোজিট\n2. উইথড্র");
+      if (action === "1" || action === "2") {
+        const trx = prompt("বিকাশ/নগদ নম্বর: 01816395401\nTRX ID দিন:");
+        alert("রিকুয়েস্ট পাঠানো হয়েছে!");
+      }
+    }
+
+    function adminLogin() {
+      const pw = prompt("এডমিন পাসওয়ার্ড দিন:");
+      if (pw === "rezoan") {
+        alert("এডমিন প্যানেলে প্রবেশ করা হয়েছে (রিয়েল)।");
+        adminPanel();
+      } else {
+        alert("ভুল পাসওয়ার্ড!");
+      }
+    }
+
+    function adminPanel() {
+      const title = prompt("ম্যাচ টাইটেল (ex: বাংলাদেশ vs ভারত):");
+      const team1 = prompt("টিম ১ নাম:");
+      const multi1 = parseFloat(prompt("টিম ১ মাল্টিপ্লায়ার:"));
+      const team2 = prompt("টিম ২ নাম:");
+      const multi2 = parseFloat(prompt("টিম ২ মাল্টিপ্লায়ার:"));
+
+      matches.push({ title, team1, team2, multi1, multi2 });
+      renderMatches();
+    }
+
+    renderMatches();
+  </script>
+
+</body>
+</html>
